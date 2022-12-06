@@ -1,1 +1,1 @@
-# Assembly_project
+this is a phone book where you can insert,delet,query and display number in your phone book . This project is implemented in assembly language 
