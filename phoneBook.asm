@@ -1,5 +1,4 @@
 .MODEL SMALL
-.STACK 100H
 .DATA
 MAIN_MENU DB ,0DH,0AH,"Phone Book",0DH,0AH            ;the starting screen for the program
           DB "Press 'I' For INSERT",0DH,0AH
@@ -16,8 +15,7 @@ DEL DB ,0DH,0AH,"FOR DELETING",0DH,0AH,'$'
 QUE DB ,0DH,0AH,"FOR QUERYING",0DH,0AH,'$' 
 DIS DB ,0DH,0AH,"FOR DISPLAYING",0DH,0AH,'$'
 EX DB ,0DH,0AH,"GOOD BYE AND HAVE A NICE TIME :)",0DH,0AH,'$'   
-CONTINUE DB ,0DH,0AH,"DO YOU WANT TO CONTINUE",0DH,0AH,'$'       
-
+       CONTINUE DB ,0DH,0AH,"DO YOU WANT TO CONTINUE",0DH,0AH,'$'       
 .CODE
 .STARTUP
 
@@ -43,6 +41,9 @@ CMP AL,'E'    ; if choice is E jump to exit function
 JE EXIT
 
      INSERT: ; TO BE IMPLEMENTED
+     MOV AH,9H
+     MOV DX,OFFSET INS
+     INT 21H
      DELETE:
      QUERY:
      DISPLAY:
@@ -51,10 +52,10 @@ JE EXIT
      
       
 
-EXIT:  ; SAY GOOD BYE AND THEN EXIT
-MOV AH,09H
-MOV DX,OFFSET EX
-INT 21H
+    EXIT:  ; SAY GOOD BYE AND THEN EXIT
+    MOV AH,09H
+    MOV DX,OFFSET EX
+    INT 21H
 .EXIT
 END
 
