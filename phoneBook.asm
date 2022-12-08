@@ -54,6 +54,9 @@ CMP AL,36H    ; if choice is 6 jump to exit function
 JE START
 
      INSERT: ; TO BE IMPLEMENTED
+     MOV AH,9H
+     MOV DX,OFFSET INS
+     INT 21H
      DELETE:
      QUERY:
      DISPLAY:
