@@ -6,7 +6,6 @@ arr dd 7dup('')
 msg db 'enter the number $',0ah,0dh  
  
 msg2 db 0ah,0dh, 'your number is $' 
-
 data ends
 
 code segment
@@ -24,11 +23,12 @@ code segment
         
        loop1:
              mov ah,1
-             int 21h 
+             int 21h
+             mov ah,0h
+             shl bx,8 
+             cmp al,65h
              mov bl,al
-             shl bl,4
-             add al,bl
-             cmp al,'a'
+             ;add bx,ax
              JNZ loop1 
                        
          
