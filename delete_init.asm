@@ -13,7 +13,8 @@ CODE SEGMENT
         
         ;TO PRIINT THE MSG WE USE INT 21H WITH 9 IN AH
         MOV AH,9
-        MOV DX, OFFSET MSG
+        ;MOV DX, OFFSET MSG or...
+        LEA DX , MSG
         INT 21H
         ; END OF PRINTING MSG
         
