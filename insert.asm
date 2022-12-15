@@ -4,14 +4,10 @@ data segment
 names DD 0  times 100
 numbers DD 0  times 100
 
-<<<<<<< HEAD
-msg db 'enter the name and enter {dollar sign} to terminate: $',0ah,0dh
-msg1 db 'enter the 11-digit  number and enter {dollar sign} to terminate: $',0ah,0dh  
-=======
+
 msg db 'enter the name and press enter to terminate: $',0ah,0dh
 msg1 db 'enter the 11-digit  number and  press enter to terminate: $',0ah,0dh  
->>>>>>> ea398f3506c75c9e036695b65275ec8b68a232d5
- 
+
 msg2 db 0ah,0dh, 'name is $'
 msg3 db 0ah,0dh, 'number is $' 
 msg4 db 0ah,0dh, 'the number is added $'
@@ -58,25 +54,19 @@ code segment
        ;mov  si,offset names     ;CX will point to the current element to insert in  
       
        ; inser name
-       loop1:
+       
+             loop1:
              mov ah,1
-             int 21h
+             int 21h                                                                
              mov [si],al
              inc si
-<<<<<<< HEAD
-             cmp al,24h
-             JNZ loop1
- COMMENT @    
-=======
              cmp al,0dh
              ;cmp al,30h
              JNZ loop1 
-             inc si
-                         
-                         
+             mov [si-1],'$'  
              
-          mov [si],'h'    
->>>>>>> ea398f3506c75c9e036695b65275ec8b68a232d5
+                
+
           mov ah,9
           lea dx,n_line
           int 21h
@@ -84,11 +74,12 @@ code segment
          mov ah,9
          lea dx,msg1
          int 21h
-         ;mov si,offset numbers
-         inc si
+         
        
         ; insert number  
-       loop2:
+      
+            
+             loop2:
              mov ah,1
              int 21h
              mov [si],al
@@ -96,39 +87,28 @@ code segment
              ;cmp al,65h 
              cmp al,0dh
              JNZ loop2 
-             inc si
-<<<<<<< HEAD
-             cmp al,24h
-             JNZ loop2
-       ;mov cx,5
-=======
+              mov [si-1],'$'
+
                
              
        mov cx,5
->>>>>>> ea398f3506c75c9e036695b65275ec8b68a232d5
+
        mov si,offset names
        mov ah,9
        lea dx,msg2
        int 21h
-<<<<<<< HEAD
-       ; print name   
-  
-=======
       
        ; print name
->>>>>>> ea398f3506c75c9e036695b65275ec8b68a232d5
        loop3:
              mov dl,[si]
              mov ah,2
              int 21h
              inc si
-             loop loop3 
-<<<<<<< HEAD
+             loop loop3
       ; mov cx,11
-=======
+
              
        mov cx,11
->>>>>>> ea398f3506c75c9e036695b65275ec8b68a232d5
        mov si,offset numbers
        inc si
        mov ah,9
@@ -146,20 +126,7 @@ code segment
                        
            
              
-       mov si,offset names
-       mov ah,9
-       lea dx,msg2
-       int 21h
-       ; print name   
-  
-       loop3:
-             mov dl,[si]
-             mov ah,2
-             int 21h
-             inc si
-             loop loop3     
-         @
-         jp loop1        
+      
          
         
       ret  
@@ -171,4 +138,17 @@ end main
 
 
 
+                              
+                              
+                              
+                              
            
+         
+         
+         
+         
+         
+         
+         
+         
+        
