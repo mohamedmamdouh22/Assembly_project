@@ -4,8 +4,8 @@ data segment
 names DD 0  times 100
 numbers DD 0  times 100
 
-msg db 'enter the name and enter 0 to terminate: $',0ah,0dh
-msg1 db 'enter the 11-digit  number and enter e to terminate: $',0ah,0dh  
+msg db 'enter the name and enter {dollar sign} to terminate: $',0ah,0dh
+msg1 db 'enter the 11-digit  number and enter {dollar sign} to terminate: $',0ah,0dh  
  
 msg2 db 0ah,0dh, 'name is $'
 msg3 db 0ah,0dh, 'number is $' 
@@ -28,9 +28,9 @@ code segment
              int 21h
              mov [si],al
              inc si
-             cmp al,30h
+             cmp al,24h
              JNZ loop1
-          mov [si],'h'    
+ COMMENT @    
           mov ah,9
           lea dx,n_line
           int 21h
@@ -46,21 +46,22 @@ code segment
              int 21h
              mov [si],al
              inc si
-             cmp al,65h
+             cmp al,24h
              JNZ loop2
-       mov cx,5
+       ;mov cx,5
        mov si,offset names
        mov ah,9
        lea dx,msg2
        int 21h
-       ; print name
+       ; print name   
+  
        loop3:
              mov dl,[si]
              mov ah,2
              int 21h
              inc si
              loop loop3 
-       mov cx,11
+      ; mov cx,11
        mov si,offset numbers
        inc si
        mov ah,9
@@ -77,8 +78,20 @@ code segment
                        
            
              
-           
-                 
+       mov si,offset names
+       mov ah,9
+       lea dx,msg2
+       int 21h
+       ; print name   
+  
+       loop3:
+             mov dl,[si]
+             mov ah,2
+             int 21h
+             inc si
+             loop loop3     
+         @
+         jp loop1        
          
         
         
