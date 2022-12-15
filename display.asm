@@ -11,20 +11,26 @@ data ends
 
 code segment
 
+
     assume cs:code, ds:data
     main proc far
         mov ax, data
         mov ds, ax
 
+
         mov cx, len1
         mov ah, 2
         mov bx, offset msg2
+
+
+       
 
         a:
             mov dl, [bx]
             int 21h
             inc bx
         loop a
+
 
          mov cx, len2
          mov ah, 2
@@ -37,6 +43,8 @@ code segment
         loop b 
 
         
+
+
         mov ah, 4ch
         int 21h
     main endp
