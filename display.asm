@@ -1,7 +1,7 @@
 data segment
-    msg2 db 'yasmen'
+    msg2 db 0ah,0dh, 'name is $'
     len1 equ $-msg2
-    msg3 db '112000'
+    msg3 db 0ah,0dh, 'number is $'
     len2 equ $-msg3
 data ends
 code segment
