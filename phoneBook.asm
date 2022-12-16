@@ -11,9 +11,9 @@ MAIN_MENU DB ,0DH,0AH,"Phone Book",0DH,0AH            ;the starting screen for t
           DB "Enter Your CHOICE",0DH,0AH,'$'     
 
 INS DB ,0DH,0AH,"FOR INSERTIN",0DH,0AH            ;the starting screen for the program
-    DB "enter the name and enter {dollar sign} to terminate: ",0DH,0AH,'$'
-names DD 0  times 100
-    
+    DB "Enter the name: ",0DH,0AH,'$'
+names db 100 dup (0) 
+numbers db 100 dup (0)   
 DEL DB ,0DH,0AH,"FOR DELETING",0DH,0AH,'$'
 QUE DB ,0DH,0AH,"FOR QUERYING",0DH,0AH,'$' 
 DIS DB ,0DH,0AH,"FOR DISPLAYING",0DH,0AH,'$' 
@@ -23,12 +23,12 @@ EX DB ,0DH,0AH,"GOOD BYE AND HAVE A NICE TIME :)",0DH,0AH,'$'
 
 
 
-msg db 'enter the name and enter {dollar sign} to terminate: $',0ah,0dh
-msg1 db 'enter the 11-digit  number and enter {dollar sign} to terminate: ',0ah,0dh,'$'  
+;msg db 'enter the name and enter {dollar sign} to terminate: $',0ah,0dh
+msg1 db 'Enter the 11-digit  number: ',0ah,0dh,'$'  
  
-counter DW 30h 
+counter DW 0h 
 n_line DB 0AH,0DH,"$"   ;for new line 
-numbers DD 0  times 100     
+     
 .CODE
 .STARTUP
 
