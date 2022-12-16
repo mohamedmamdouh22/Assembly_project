@@ -12,6 +12,7 @@ code segment
         mov cx,len1
         mov ah,2
         mov bx,offset msg2
+        ;TO PRINT THE NAME
         a:
            mov dl,[bx]
            int 21h
@@ -21,6 +22,7 @@ code segment
         mov ah,2
         mov bx,offset msg3 
        
+       ;TO PRINT THE NUMBER
         b:
            mov dl,[bx]
            int 21h
