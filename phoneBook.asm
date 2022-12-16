@@ -114,7 +114,7 @@ JE START
              
      DELETE:
      QUERY:
-     DISPLAY:
+     DISPLAY:; To print the name and number
      
      
      
