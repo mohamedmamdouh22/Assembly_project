@@ -1,36 +1,54 @@
-DATA SEGMENT 
-    MSG DB 'ENTER THE NAME YOU WANT TO DELETE: $'
+data segment 
+    msg db 'enter the name you want to delete: $'   
+    names DD 0  times 100
+    numbers DD 0  times 100
+    
+data ends
 
 
-DATA ENDS
-
-
-CODE SEGMENT 
-    ASSUME CS:CODE  , DS:DATA
-    MAIN PROC FAR
-        MOV AX ,DATA
-        MOV DS , AX                 
+code segment 
+    assume cs:code  , ds:data
+    main proc far
+        mov ax ,data
+        mov ds , ax                 
         
-        ;TO PRIINT THE MSG WE USE INT 21H WITH 9 IN AH
-        MOV AH,9
-        ;MOV DX, OFFSET MSG or...
-        LEA DX , MSG
-        INT 21H
-        ; END OF PRINTING MSG 
+        ;to priint the msg we use int 21h with 9 in ah
+        mov ah,9
+        ;mov dx, offset msg   or...
+        lea dx , msg
+        int 21h
+        ; end of printing msg   
         
         
+        
+        find:
+        
+            
+            JNZ find
+        
+        
+        
+        
+        
+                      
+                      
+                      
         ;at the end of the program we should release the cpu and let the os take control over the cpu
-        MOV AH ,4CH
-        INT 21H     
-        ;cpu released
-    MAIN ENDP
-CODE ENDS 
-END MAIN
-
-
-
-
-
-
-
+        mov ah ,4ch
+        int 21h     
+        ;cpu released     
+        
+        main endp
+    
+    
+    
+        ;func proc near 
+            
+         ; ret
+        ;func endp
+        
+        
+    
+code ends 
+end main
 

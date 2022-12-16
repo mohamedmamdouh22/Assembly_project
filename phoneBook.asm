@@ -10,17 +10,30 @@ MAIN_MENU DB ,0DH,0AH,"Phone Book",0DH,0AH            ;the starting screen for t
           DB "*******************************",0DH,0AH
           DB "Enter Your CHOICE",0DH,0AH,'$'     
 
-INS DB ,0DH,0AH,"FOR INSERTIN",0DH,0AH,'$'
+INS DB ,0DH,0AH,"FOR INSERTIN",0DH,0AH            ;the starting screen for the program
+    DB "enter the name and enter {dollar sign} to terminate: ",0DH,0AH,'$'
+names DD 0  times 100
+    
 DEL DB ,0DH,0AH,"FOR DELETING",0DH,0AH,'$'
 QUE DB ,0DH,0AH,"FOR QUERYING",0DH,0AH,'$' 
 DIS DB ,0DH,0AH,"FOR DISPLAYING",0DH,0AH,'$' 
 WRG DB ,0DH,0AH,"WRONG CHOICE",0DH,0AH,'$'
 EX DB ,0DH,0AH,"GOOD BYE AND HAVE A NICE TIME :)",0DH,0AH,'$'   
-       CONTINUE DB ,0DH,0AH,"DO YOU WANT TO CONTINUE",0DH,0AH,'$'       
+       CONTINUE DB ,0DH,0AH,"DO YOU WANT TO CONTINUE Y/E",0DH,0AH,'$' 
+
+
+
+msg db 'enter the name and enter {dollar sign} to terminate: $',0ah,0dh
+msg1 db 'enter the 11-digit  number and enter {dollar sign} to terminate: ',0ah,0dh,'$'  
+ 
+ 
+n_line DB 0AH,0DH,"$"   ;for new line 
+numbers DD 0  times 100     
 .CODE
 .STARTUP
 
-
+mov bx,offset names ; hold base pointer for names array
+mov di,offset numbers ; hold base pointer for numbers array 
 START:          ;MAIN function
 MOV AH,09H
 MOV DX, OFFSET MAIN_MENU    ;DISPLAY GUI 
@@ -54,6 +67,50 @@ CMP AL,36H    ; if choice is 6 jump to exit function
 JE START
 
      INSERT: ; TO BE IMPLEMENTED
+     mov ah,9h
+     mov dx,offset INS
+     int 21h
+       ;inser name
+       loop1:
+             mov ah,1
+             int 21h
+             mov [bx],al
+             inc bx
+             cmp al,0Dh
+             JNZ loop1
+             mov [bx-1],'$'
+           
+          mov ah,9
+          lea dx,n_line
+          int 21h
+         ;to print the msg
+         mov ah,9
+         lea dx,msg1
+         int 21h
+         ;mov di,offset numbers
+        ; insert number  
+       loop2:
+             mov ah,1
+             int 21h
+             mov [di],al
+             inc di
+             cmp al,0DH
+             JNZ loop2
+             mov [di-1],'$'
+             
+             ;FOR CONTINUE
+            MOV AH,09H
+            MOV DX,OFFSET CONTINUE
+            INT 21H
+            MOV AH,01H
+            INT 21H
+            CMP AL,'Y'
+            JE START
+            CMP AL,'E'
+            JE EXIT
+                         
+             
+             
      DELETE:
      QUERY:
      DISPLAY:
