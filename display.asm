@@ -16,7 +16,7 @@ code segment
            mov dl,[bx]
            int 21h
            inc bx
-        loop a 
+        loop a
        
         b:
            mov dl,[bx]
