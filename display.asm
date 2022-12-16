@@ -21,18 +21,10 @@ code segment
         mov ah, 2
         mov bx, offset msg2
 
-<<<<<<<<< Temporary merge branch 1
-=======
-        mov cx, len
-        mov ah, 2
-        mov bx, offset msg
->>>>>>> main
-=========
 
        
 
->>>>>>>>> Temporary merge branch 2
-        a:
+
         a:   
             mov dl, [bx]
             int 21h
