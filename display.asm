@@ -22,6 +22,9 @@ code segment
         mov bx, offset msg2
 
 
+       
+
+
         a:   
             mov dl, [bx]
             int 21h
