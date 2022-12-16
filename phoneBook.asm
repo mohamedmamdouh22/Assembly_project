@@ -26,7 +26,7 @@ EX DB ,0DH,0AH,"GOOD BYE AND HAVE A NICE TIME :)",0DH,0AH,'$'
 msg db 'enter the name and enter {dollar sign} to terminate: $',0ah,0dh
 msg1 db 'enter the 11-digit  number and enter {dollar sign} to terminate: ',0ah,0dh,'$'  
  
- 
+counter DW 30h 
 n_line DB 0AH,0DH,"$"   ;for new line 
 numbers DD 0  times 100     
 .CODE
@@ -67,6 +67,7 @@ CMP AL,36H    ; if choice is 6 jump to exit function
 JE START
 
      INSERT: ; TO BE IMPLEMENTED
+     inc counter
      mov ah,9h
      mov dx,offset INS
      int 21h
