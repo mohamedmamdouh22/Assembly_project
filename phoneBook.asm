@@ -67,11 +67,11 @@ CMP AL,36H    ; if choice is 6 jump to exit function
 JE START
 
      INSERT: ; TO BE IMPLEMENTED     
-     mov bx,offset names
+     mov si,offset names
      mov di,offset numbers 
      mov ax,20
      mul counter
-     add bx,ax
+     add si,ax
      add di,ax
     
      inc counter
@@ -82,11 +82,11 @@ JE START
        loop1:
              mov ah,1
              int 21h
-             mov [bx],al
-             inc bx
+             mov [si],al
+             inc si
              cmp al,0Dh
              JNZ loop1
-             mov [bx-1],0h
+             mov [si-1],0h
            
           mov ah,9
           lea dx,n_line
