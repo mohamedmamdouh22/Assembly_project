@@ -106,7 +106,7 @@ JE START
              inc di
              cmp al,0DH
              JNZ loop2
-             mov [di-1],'$'
+             mov [di-1],0h
              
              ;FOR CONTINUE
             MOV AH,09H
