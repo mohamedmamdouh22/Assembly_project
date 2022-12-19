@@ -35,7 +35,7 @@ n_line DB 0AH,0DH,"$"   ;for new line
 .CODE
 .STARTUP
 
-mov bx,offset names ; hold base pointer for names array
+;mov bx,offset names ; hold base pointer for names array
 mov di,offset numbers ; hold base pointer for numbers array 
 START:          ;MAIN function
 MOV AH,09H
@@ -70,21 +70,26 @@ CMP AL,36H    ; if choice is 6 jump to exit function
 JE START
 
      INSERT: ; TO BE IMPLEMENTED
+      mov si,offset names
+      mov di,offset numbers 
+      mov ax,20
+      mul counter
+      add si,ax
+      add di,ax     
      inc counter
      mov ah,9h
      mov dx,offset INS
      int 21h
        ;inser name 
-       
        loop1:
              mov ah,1
              int 21h
-             mov [bx],al
-             inc bx
+             mov [si],al
+             inc si
              cmp al,0Dh
              JNZ loop1
-             mov [bx-1],'$'
-           
+             mov [si-1],0h
+            
           mov ah,9
           lea dx,n_line
           int 21h
@@ -101,7 +106,7 @@ JE START
              inc di
              cmp al,0DH
              JNZ loop2
-             mov [di-1],'$'
+             mov [di-1],0h
              
              ;FOR CONTINUE
             MOV AH,09H
@@ -124,25 +129,38 @@ JE START
      
      
      DISPLAY:
+<<<<<<< HEAD
         mov si,offset names
         mov bx,offset numbers
+=======
+     
+        mov bx,0
+>>>>>>> main
         mov cx,counter
         outerLoop:
             mov ah,9h
             mov dx,offset nameP
             int 21h
+              mov si,offset names
+              mov ax,20
+              mul bx
+              add si,ax
             loop7:
                 mov ah,2
                 mov dx,[si]
                 int 21h
                 inc si
-                cmp [si],'$'
+                cmp [si],0h
                 jnz loop7
                 inc si
+<<<<<<< HEAD
            
+=======
+>>>>>>> main
             mov ah,9h
             mov dx,offset n_line
             int 21h
+            inc bx
             loop outerLoop
             ;FOR CONTINUE
             MOV AH,09H
@@ -154,7 +172,7 @@ JE START
             JE START
             CMP AL,'E'
             JE EXIT                
-
+         
 
     EXIT:  ; SAY GOOD BYE AND THEN EXIT
     MOV AH,09H
