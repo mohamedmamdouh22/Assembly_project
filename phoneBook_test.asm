@@ -125,7 +125,7 @@ JE START
      
      DISPLAY:
         mov si,offset names
-        ;mov bx,offset numbers
+        mov bx,offset numbers
         mov cx,counter
         outerLoop:
             mov ah,9h
