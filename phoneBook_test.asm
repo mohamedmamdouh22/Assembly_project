@@ -129,39 +129,34 @@ JE START
      
      
      DISPLAY:
-<<<<<<< HEAD
         mov si,offset names
-        mov bx,offset numbers
-=======
-     
-        mov bx,0
->>>>>>> main
+        ;mov bx,offset numbers
         mov cx,counter
         outerLoop:
             mov ah,9h
             mov dx,offset nameP
             int 21h
-              mov si,offset names
-              mov ax,20
-              mul bx
-              add si,ax
             loop7:
                 mov ah,2
                 mov dx,[si]
                 int 21h
                 inc si
-                cmp [si],0h
+                cmp [si],'$'
                 jnz loop7
                 inc si
-<<<<<<< HEAD
-           
-=======
->>>>>>> main
+            loop8:
+                mov ah,2
+                mov dx,[bx]
+                int 21h
+                inc bx
+                cmp [bx],'$'
+                jnz loop8
+                inc bx     
             mov ah,9h
             mov dx,offset n_line
             int 21h
-            inc bx
             loop outerLoop
+            
             ;FOR CONTINUE
             MOV AH,09H
             MOV DX,OFFSET CONTINUE
