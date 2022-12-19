@@ -139,14 +139,7 @@ JE START
                 cmp [si],'$'
                 jnz loop7
                 inc si
-            loop8:
-                mov ah,2
-                mov dx,[bx]
-                int 21h
-                inc bx
-                cmp [bx],'$'
-                jnz loop8
-                inc bx     
+           
             mov ah,9h
             mov dx,offset n_line
             int 21h
