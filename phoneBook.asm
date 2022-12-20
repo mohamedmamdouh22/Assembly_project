@@ -141,8 +141,10 @@ JE START
             INT 21H
             CMP AL,'Y'
             JE START
-            CMP AL,'E'
-            JE EXIT
+            cmp al,'y'
+            je START
+            ;CMP AL,'E'
+            Jmp EXIT
                          
              
              
