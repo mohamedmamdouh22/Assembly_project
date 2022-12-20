@@ -13,7 +13,8 @@ MAIN_MENU DB ,0DH,0AH,"Phone Book",0DH,0AH            ;the starting screen for t
 INS DB ,0DH,0AH,"FOR INSERTIN",0DH,0AH            ;the starting screen for the program
     DB "Enter the name: ",0DH,0AH,'$'
 names db 100 dup (0) 
-numbers db 100 dup (0)   
+numbers db 100 dup (0)
+buffer db 20,?, 20 dup(0)   
 DEL DB ,0DH,0AH,"FOR DELETING",0DH,0AH,'$'
 QUE DB ,0DH,0AH,"FOR QUERYING",0DH,0AH,'$' 
 DIS DB ,0DH,0AH,"FOR DISPLAYING",0DH,0AH,'$' 
@@ -67,26 +68,38 @@ CMP AL,36H    ; if choice is 6 jump to exit function
 JE START
 
      INSERT: ; TO BE IMPLEMENTED     
-     mov si,offset names
-     mov di,offset numbers 
+     mov di,offset names
+     mov bp,offset numbers 
      mov ax,20
      mul counter
-     add si,ax
      add di,ax
+     add bp,ax
     
      inc counter
      mov ah,9h
      mov dx,offset INS
      int 21h
-       ;inser name
-       loop1:
-             mov ah,1
-             int 21h
-             mov [si],al
-             inc si
-             cmp al,0Dh
-             JNZ loop1
-             mov [si-1],0h
+       ;inser name  
+        mov dx,offset buffer    ; to take input as one string and store it in buffer
+        mov ah,0ah
+        int 21h    
+                   
+        
+        xor bx, bx
+		mov bl, buffer[1]
+		mov buffer[bx+2], 0h
+		mov si, offset buffer+2   ;the actul offset of buffer start at buffer+2
+        
+       ;take the name from buffer and store it into array of names
+       loop1: 
+            mov cx,[si]
+            mov [di],cx
+            inc si
+            inc di
+            cmp [si],0h
+            jnz loop1
+       
+        
            
           mov ah,9
           lea dx,n_line
@@ -95,16 +108,30 @@ JE START
          mov ah,9
          lea dx,msg1
          int 21h
-         ;mov di,offset numbers
-        ; insert number  
-       loop2:
-             mov ah,1
-             int 21h
-             mov [di],al
-             inc di
-             cmp al,0DH
-             JNZ loop2
-             mov [di-1],0h
+         
+        ; insert number 
+             
+               mov dx,offset buffer           
+               mov ah,0ah
+               int 21h  
+               
+               
+                xor bx, bx
+        	    mov bl, buffer[1]
+        		mov buffer[bx+2], 0h
+        		mov si, offset buffer+2
+              
+         
+        ;take number from buffer and store it into array of numbers   
+                     
+       loop2: 
+            mov dx,[si]
+            mov [bp],dx
+            inc si
+            inc bp
+            cmp [si],0h
+            JNZ loop2
+            
              
              ;FOR CONTINUE
             MOV AH,09H
