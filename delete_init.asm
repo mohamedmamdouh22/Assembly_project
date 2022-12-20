@@ -2,7 +2,7 @@ data segment
     msg db 'enter the name you want to delete: $'   
     names DD 0  times 100
     numbers DD 0  times 100
-    input DB           
+             
     counter DW 30h 
     msg2 db 'The phonebook is empty!$'
 data ends
@@ -29,40 +29,72 @@ code segment
         int 21h
         ; end of printing msg   
         
+        
+        ;================================================================
+        ; take input
+        mov dx, offset buffer
+		mov ah, 0ah
+		int 21h
+		
+		xor bx, bx
+		mov bl, buffer[1]
+		mov buffer[bx+2], 0h
+		mov si, offset buffer+2    ; si holds the start address of buffer
+        ;input taken
+        
+                 
+        
+        
         mov bx,offset names ; hold base pointer for names array
         mov di,offset numbers ; hold base pointer for numbers array      
-        lea cx , input
-        ;================================================================
-        loop1:         ; this loop is to take the input name
-             mov ah,1
-             int 21h
-             mov [cx],al 
-             inc cx
-             cmp al,0Dh
-             JNZ loop1
-             mov [cx-1],'$' 
+        mov cx , 14h  ; cx holds 20
+        xor bp,bp ;bp=0 
         
-        lea cx , input    ;cx holds the input address
+         ; cx= 20
+         ; si=base of buffer 
+         ; bx = base of names 
+         ; di= base of numbers
+         ; bp =0
+         ; ax hold char    
+         
+         
         
-        loop2:            ;this loop is to campare input with names elements
-            lea si, str1
-        	lea di, str2
-                		;use string instructions
-                		;to comapre the two strings
-        	cld         ;clear direction flags
-        	repe cmpsb  ;repeat compare string byte
-        	je s_same
-        	jmp s_not
+        
+       ;find name 
+          
+        find:          ;need modification --> name not found
+        
+            ;cmp bp,counter
+            ;jz  not_found
             
-            
-        s_same:
-        s_not:
+            mov ax ,[si]   ;ax holds the char of buffer
+            cmp ax ,[bx]  
+            jnz next  
+           
+    		inc si
+    		inc bx
+    		loop find 
+    		          
+    		          
+    	cmp cx,30h      ;if cx = 0 it means we found the element
+    	jz found
+    	   	 
+    	   	 
+        next:    
+            mov cx,14h                  ;set cx to 20
+            mov si, offset buffer+2     ;set si to buffer base
+            add bx ,cx+1            
+            jmp find
+               
+               
+               
+        found:  
+          sub bx , 14h  ; bx = bx-20
+          ;continue
+          
+      
         
         
-        
-        
-        
-                      
                       
         ;=================================================================         
         ;at the end of the program we should release the cpu and let the os take control over the cpu
