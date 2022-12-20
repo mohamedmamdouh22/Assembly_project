@@ -22,7 +22,7 @@ WRG DB ,0DH,0AH,"WRONG CHOICE",0DH,0AH,'$'
 EX DB ,0DH,0AH,"GOOD BYE AND HAVE A NICE TIME :)",0DH,0AH,'$'   
        CONTINUE DB ,0DH,0AH,"DO YOU WANT TO CONTINUE Y/E",0DH,0AH,'$' 
 
-
+buffer db 20,?, 20 dup(0)
 nameP db 'name is: ',0ah,0dh,'$'
 msg db 'enter the name and enter {dollar sign} to terminate: $',0ah,0dh
 msg1 db 'enter the 11-digit  number and enter {dollar sign} to terminate: ',0ah,0dh,'$'  
@@ -70,26 +70,34 @@ CMP AL,36H    ; if choice is 6 jump to exit function
 JE START
 
      INSERT: ; TO BE IMPLEMENTED
-      mov si,offset names
-      mov di,offset numbers 
+      mov di,offset names
+      mov bp,offset numbers 
       mov ax,20
       mul counter
-      add si,ax
-      add di,ax     
+      add di,ax
+      add bp,ax     
      inc counter
      mov ah,9h
      mov dx,offset INS
      int 21h
        ;inser name 
-       loop1:
-             mov ah,1
-             int 21h
-             mov [si],al
-             inc si
-             cmp al,0Dh
-             JNZ loop1
-             mov [si-1],0h
-            
+		mov dx, offset buffer
+		mov ah, 0ah
+		int 21h
+
+		xor bx, bx
+		mov bl, buffer[1]
+		mov buffer[bx+2], 0h
+		mov si, offset buffer+2
+		loop1:
+    		mov cx,[si]
+    		mov [di],cx
+    		inc si
+    		inc di
+    		cmp [si],0h
+    		jnz loop1
+
+	     	 
           mov ah,9
           lea dx,n_line
           int 21h
@@ -99,15 +107,22 @@ JE START
          int 21h
          ;mov di,offset numbers
         ; insert number  
-       loop2:
-             mov ah,1
-             int 21h 
-             mov [di],al
-             inc di
-             cmp al,0DH
-             JNZ loop2
-             mov [di-1],0h
-             
+      	mov dx, offset buffer
+		mov ah, 0ah
+		int 21h
+
+		xor bx, bx
+		mov bl, buffer[1]
+		mov buffer[bx+2], 0h
+		mov si, offset buffer+2
+		loop2:
+    		mov dx,[si]
+    		mov [bp],dx
+    		inc si
+    		inc bp
+    		cmp [si],0h
+    		jnz loop2
+                 
              ;FOR CONTINUE
             MOV AH,09H
             MOV DX,OFFSET CONTINUE
@@ -129,34 +144,30 @@ JE START
      
      
      DISPLAY:
-        mov si,offset names
-        mov bx,offset numbers
+     
+        mov bx,0
         mov cx,counter
         outerLoop:
             mov ah,9h
             mov dx,offset nameP
             int 21h
+              mov si,offset names
+              mov ax,20
+              mul bx
+              add si,ax
             loop7:
                 mov ah,2
                 mov dx,[si]
                 int 21h
                 inc si
-                cmp [si],'$'
+                cmp [si],0h
                 jnz loop7
                 inc si
-            loop8:
-                mov ah,2
-                mov dx,[bx]
-                int 21h
-                inc bx
-                cmp [bx],'$'
-                jnz loop8
-                inc bx     
             mov ah,9h
             mov dx,offset n_line
             int 21h
+            inc bx
             loop outerLoop
-            
             ;FOR CONTINUE
             MOV AH,09H
             MOV DX,OFFSET CONTINUE
