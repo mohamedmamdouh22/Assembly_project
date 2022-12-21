@@ -2,8 +2,9 @@ data segment
     msg db 'enter the name you want to delete: $'   
     names DD 0  times 100
     numbers DD 0  times 100
-             
+           
     counter DW 30h 
+    buffer db 20,?, 20 dup(0)
     msg2 db 'The phonebook is empty!$'
 data ends
 
@@ -48,7 +49,7 @@ code segment
         mov bx,offset names ; hold base pointer for names array
         mov di,offset numbers ; hold base pointer for numbers array      
         mov cx , 14h  ; cx holds 20
-        xor bp,bp ;bp=0 
+        xor dl ,dl    ;dl =0
         
          ; cx= 20
          ; si=base of buffer 
@@ -56,9 +57,6 @@ code segment
          ; di= base of numbers
          ; bp =0
          ; ax hold char    
-         
-         
-        
         
        ;find name 
           
@@ -67,8 +65,8 @@ code segment
             ;cmp bp,counter
             ;jz  not_found
             
-            mov ax ,[si]   ;ax holds the char of buffer
-            cmp ax ,[bx]  
+            mov al ,[si]   ;al holds the char of buffer
+            cmp al ,[bx]  
             jnz next  
            
     		inc si
@@ -76,26 +74,42 @@ code segment
     		loop find 
     		          
     		          
-    	cmp cx,30h      ;if cx = 0 it means we found the element
-    	jz found
+    	cmp cx, 0h      ;if cx = 0 it means we found the element
+    	jz found    	   	 
     	   	 
-    	   	 
-        next:    
+        next:                
+            mov si, offset buffer+2     ;set si to buffer base 
+            inc cx
+            add bx ,cx    
             mov cx,14h                  ;set cx to 20
-            mov si, offset buffer+2     ;set si to buffer base
-            add bx ,cx+1            
+            inc dl                      ;dl++
             jmp find
                
-               
-               
-        found:  
-          sub bx , 14h  ; bx = bx-20
-          ;continue
-          
-      
-        
-        
-                      
+        found:
+          mov si,offset names   ; hold base pointer for names array
+          mov di,offset numbers ; hold base pointer for numbers array      
+          mov cx , 14h          ; cx holds 20 
+           
+          mov al ,dl
+          mov dl, 15h
+          mul dl                  
+          mov bx ,ax                ;bx holds the offset of element we want to delete
+          dec counter           
+          mov al ,counter
+          mul dl                    ;ax holds the offset of last element        
+          del:
+            mov dl , [si+ax]
+            mov [si+bx],dl
+            
+            mov dl ,[di+ax]
+            mov [di+bx],dl  
+            
+            inc ax
+            inc bx
+            loop del 
+            
+         
+                 
         ;=================================================================         
         ;at the end of the program we should release the cpu and let the os take control over the cpu
         mov ah ,4ch
