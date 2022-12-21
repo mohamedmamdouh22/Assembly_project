@@ -3,7 +3,7 @@ data segment
     names DD 0  times 100
     numbers DD 0  times 100
            
-    counter DW 30h 
+    counter DB 30h 
     buffer db 20,?, 20 dup(0)
     msg2 db 'The phonebook is empty!$'
 data ends
@@ -94,17 +94,19 @@ code segment
           mov dl, 15h
           mul dl                  
           mov bx ,ax                ;bx holds the offset of element we want to delete
+          
           dec counter           
           mov al ,counter
-          mul dl                    ;ax holds the offset of last element        
+          mul dl                    ;ax holds the offset of last element 
+          mov bp , ax       
           del:
-            mov dl , [si+ax]
+            mov dl , [si+bp]
             mov [si+bx],dl
             
-            mov dl ,[di+ax]
+            mov dl ,[di+bp]
             mov [di+bx],dl  
             
-            inc ax
+            inc bp
             inc bx
             loop del 
             
