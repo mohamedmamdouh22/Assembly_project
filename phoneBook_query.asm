@@ -77,6 +77,64 @@ code segment
             loop upper_case
         ;================================================
          
+          
+        ;tranfer names in an array answer
+        ;===============================================
+           mov si , 0
+           mov bx , 0
+           transfer:
+                mov al , names[si]
+                mov answer[bx] , al
+                inc si
+                inc bx 
+                mov ax , si
+                cmp bx , 21 ; if true zf = 1
+                jnz transfer           
+        ;==============================================
+         
+         
+         ;compare two strings
+        ;=============================================
+         lea si , key
+         lea di , answer 
+         mov cx , 20
+         
+         repe    cmpsb
+         jnz     fill   ;to check another name
+         ;============================================
+        
+        ;output the name 
+        ;=======================================
+        ; get actual string size:
+         xor cx, cx
+         mov cl, key[1]
+         print_new_line
+                  
+         mov bx, offset key[2]
+         print_name:
+             mov dl, [bx]
+             mov ah, 2
+             int 21h         
+             inc bx
+             loop print_name
+         ; wait for any key...
+         mov ax, 0 
+         int 16h
+        ;======================================= 
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
        ;=============================================================
         found:
            ;print the name and the number
