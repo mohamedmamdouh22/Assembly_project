@@ -1,14 +1,12 @@
 data segment                                                
-    ;0ah to new line
-    ;0dh return to  the beginning of the line 
     ;========================================================
-    msg db   0ah,0dh'Enter the name you want to looking for: $'   
-    names DD 0  times 100
-    numbers DD 0  times 100
-    key db 100 dup(?)            
-    counter DW 30h                       ; counter = 0 
-    msg2 db 0ah,0dh,'the number is : $'
-    msg3 db 0ah,0dh,'This name not found!$'
+    msg db   'Enter the name you want to looking for: $'   
+    names Db 100  dup('a')
+    numbers Db 100 dup ('a')
+    key db 20,?, 20 dup(?)        ;key = input string (sizeof(20))           
+    answer db 20 dup (?)
+    msg2 db 'the number is : $'
+    msg3 db 'This name not found!$'
     ;=======================================================
 data ends
 
@@ -22,6 +20,16 @@ code segment
         mov ds , ax 
         ;==================================
         
+        ;=================================
+        print_new_line macro
+            mov dl, 13
+            mov ah, 2
+            int 21h   
+            mov dl, 10
+            mov ah, 2
+            int 21h      
+        endm
+        ;=================================
         
                  
         ;===========================================================
@@ -31,41 +39,44 @@ code segment
         ; end of printing msg 
         ;===========================================================  
           
-          
-             
-        ;==========================================================   
-        lea si, names ; hold base pointer for names array
-        lea di, numbers ; hold base pointer for numbers array      
-        ;==========================================================
-       
-       
-       
         ; take the input from the user 
         ;=============================================================
-        get_input:         
-             mov ah,1    ; to take a value from the user  ah = 1
-             int 21h     ; and the value will be stored in al 
-             mov [cx],al 
-             inc cx
-             cmp al,0dh       ;al = Enter 
-             JNZ get_input
-             mov [cx-1],'$'   ;put $ at the end of the name
-        
-        lea cx , key    ;cx holds the input address
-        ;==============================================================
+         mov dx, offset key
+         mov ah, 0ah
+         int 21h   
+        ;=========================================================  
         
         
-        
-        ;looking for the name
-       ;============================================================ 
-        looking_for: 
-                  ; if the name is found go to found 
-                  ; else go to not found
-                          
-       ;=============================================================       
-       
-       
-       
+        ;change all characters to capital case 
+        ;================================================
+         lea bx, key
+         mov ch, 0
+         mov cl, [bx+1] ; get string size.
+        ; jcxz null ; is string is empty?
+         add bx, 2 ; skip control chars.
+         upper_case:
+
+         ; check if it's a lower case letter:
+              cmp byte ptr [bx], 'a'
+              jb ok
+              cmp byte ptr [bx], 'z'
+              ja ok
+
+          ; convert to uppercase:
+
+         ; upper case letter do not have third bit set, for example:
+         ; 'a'    : 01100001b
+         ; 'A':     01000001b
+         ; upper case mask : 11011111b
+
+         ; clear third bit:
+         and byte ptr [bx], 11011111b
+
+         ok:
+            inc bx ; next char.
+            loop upper_case
+        ;================================================
+         
        ;=============================================================
         found:
            ;print the name and the number
