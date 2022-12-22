@@ -37,7 +37,7 @@ msg_del3 db 'name not found!$'
 
 fname db 'first.txt',0
 fhandle dw ?
-
+tab DB 0AH,0DH,"    "   ;for new line
 empty db ,' Empty note book ',0ah,0dh,'$'
 
 n_line DB 0AH,0DH,"$"   ;for new line
@@ -308,7 +308,7 @@ je EXIT
             
            ;to write in file
            cmp counter2,0
-           jz CONT 
+           jz EMP 
            mov si,counter2 
            mov di,0h
            loop5:
@@ -345,14 +345,16 @@ je EXIT
             inc di
             cmp si,0h
             jnz loop5
+            jmp CONT
              ;FOR CONTINUE
-            CONT:
+          EMP:
             mov ah,9h
             lea dx,n_line
             int 21h
             mov ah,9h
             lea dx,empty
             int 21h
+          CONT:
             MOV AH,09H
             MOV DX,OFFSET CONTINUE
             INT 21H
@@ -385,7 +387,7 @@ je EXIT
             
   
             cmp counter2,0h
-            jz CONT
+            jz EMP
            ;to write in file
            mov si,counter2 
            mov di,0h
@@ -442,7 +444,8 @@ je EXIT
        QUERY:
 
      DISPLAY:
-     
+        cmp counter2,0h
+        jz EMP
         mov bx,0
         mov cl,counter
         mov al , 1h
@@ -468,6 +471,7 @@ je EXIT
                 cmp [si],0h
                 jnz loop7
                 inc si
+
              loop8:
                 mov ah,2
                 mov dx,[di]
