@@ -449,13 +449,17 @@ je EXIT
         mul cl
         mov cx ,ax
         outerLoop:
-            mov ah,9h
-            mov dx,offset nameP
-            int 21h
+           ; mov ah,9h
+           ; mov dx,offset nameP
+           ; int 21h
               mov si,offset names
               mov ax,20
               mul bx
               add si,ax
+              mov di,offset numbers
+              mov ax,20
+              mul bx
+              add di,ax
             loop7:
                 mov ah,2
                 mov dx,[si]
@@ -464,6 +468,14 @@ je EXIT
                 cmp [si],0h
                 jnz loop7
                 inc si
+             loop8:
+                mov ah,2
+                mov dx,[di]
+                int 21h
+                inc di
+                cmp [di],0h
+                jnz loop8
+                inc si    
             mov ah,9h
             mov dx,offset n_line
             int 21h
