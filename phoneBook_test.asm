@@ -1,4 +1,3 @@
-
 .MODEL SMALL
 .DATA
 MAIN_MENU DB ,0DH,0AH,"Phone Book",0DH,0AH            ;the starting screen for the program
@@ -23,11 +22,15 @@ EX DB ,0DH,0AH,"GOOD BYE AND HAVE A NICE TIME :)",0DH,0AH,'$'
        CONTINUE DB ,0DH,0AH,"DO YOU WANT TO CONTINUE Y/E",0DH,0AH,'$' 
 
 buffer db 20,?, 20 dup(0)
+buffer2 db 20,?, 20 dup(0)
 nameP db 'name is: ',0ah,0dh,'$'
 msg db 'enter the name and enter {dollar sign} to terminate: $',0ah,0dh
 msg1 db 'enter the 11-digit  number and enter {dollar sign} to terminate: ',0ah,0dh,'$'  
  
-counter DW 0h
+counter DB 0h 
+msg_del db 'enter the name you want to delete: $' 
+msg_del2 db 'The phonebook is empty!$'
+msg_del3 db 'name not found!$' 
 
 n_line DB 0AH,0DH,"$"   ;for new line
  
@@ -138,7 +141,137 @@ JE START
                          
              
              
-     DELETE:
+     DELETE:    
+        ;to priint the msg we use int 21h with 9 in ah
+        mov ah,9
+        ;mov dx, offset msg   or...
+        lea dx , msg_del
+        int 21h
+        ; end of printing msg   
+        
+        
+        ;================================================================
+        ; take input
+        mov dx, offset buffer2
+		mov ah, 0ah
+		int 21h
+		
+		xor bx, bx
+		mov bl, buffer2[1]
+		mov buffer2[bx+2], 0h
+		mov si, offset buffer2+2    ; si holds the start address of buffer
+        ;input taken
+        
+                 
+        
+        
+        mov bx,offset names ; hold base pointer for names array
+        mov di,offset numbers ; hold base pointer for numbers array      
+        mov cx , 14h  ; cx holds 20
+        xor dl ,dl    ;dl =0
+        
+         ; cx= 20
+         ; si=base of buffer 
+         ; bx = base of names 
+         ; di= base of numbers
+         ; bp =0
+         ; ax hold char   
+        
+       ;find name 
+          
+        find:          
+        
+            cmp dl,counter
+            jz  not_found
+            
+            mov al ,[si]   ;al holds the char of buffer
+            cmp al ,[bx]  
+            jnz next  
+           
+    		inc si
+    		inc bx
+    		loop find 
+    		          
+    		          
+    	cmp cx, 0h      ;if cx = 0 it means we found the element
+    	jz found    	   	 
+    	   	 
+        next:                
+            mov si, offset buffer2+2     ;set si to buffer base
+            mov bx,offset names ; hold base pointer for names array  
+            inc dl 
+            mov al , 15h        ;ax= dl * 21 
+            mul dl
+            add bx ,ax
+             
+               
+            mov cx,14h           ;set cx to 20
+                                 ;dl++
+            jmp find
+               
+        found:
+          mov si,offset names   ; hold base pointer for names array
+          mov di,offset numbers ; hold base pointer for numbers array      
+          mov cx , 14h          ; cx holds 20 
+           
+          mov al ,dl
+          mov dl, 15h
+          mul dl                  
+          mov bx ,ax                ;bx holds the offset of element we want to delete
+          
+          dec counter           
+          mov al ,counter
+          mul dl                    ;ax holds the offset of last element 
+          mov bp , ax               ;need modification
+          
+          del_n:
+            mov dl , [si+bp]
+            mov [si+bx],dl
+            
+            mov dl ,[di+bp]
+            mov [di+bx],dl  
+            
+            inc bp
+            inc bx
+            loop del_n   
+          
+            
+            ;FOR CONTINUE
+            MOV AH,09H
+            MOV DX,OFFSET CONTINUE
+            INT 21H
+            MOV AH,01H
+            INT 21H
+            CMP AL,'Y'
+            JE START
+            CMP AL,'E'
+            JE EXIT
+            
+              
+        not_found:     
+            mov ah,9h
+            mov dx,offset n_line
+            int 21h
+            ;to priint the msg we use int 21h with 9 in ah
+            mov ah,9
+            ;mov dx, offset msg   or...
+            lea dx , msg_del3
+            int 21h
+            ; end of printing msg   
+            
+            ;FOR CONTINUE
+            MOV AH,09H
+            MOV DX,OFFSET CONTINUE
+            INT 21H
+            MOV AH,01H
+            INT 21H
+            CMP AL,'Y'
+            JE START
+            CMP AL,'E'
+            JE EXIT  
+        
+                 
+     
      QUERY:
      
      
@@ -148,7 +281,10 @@ JE START
      DISPLAY:
      
         mov bx,0
-        mov cx,counter
+        mov cl,counter
+        mov al , 1h
+        mul cl
+        mov cx ,ax
         outerLoop:
             mov ah,9h
             mov dx,offset nameP
@@ -188,4 +324,3 @@ JE START
     INT 21H
 .EXIT
 END
-
