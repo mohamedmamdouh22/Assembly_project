@@ -3,11 +3,12 @@
 .DATA
 MAIN_MENU DB ,0DH,0AH,"Phone Book",0DH,0AH            ;the starting screen for the program
           DB "Press '1' For INSERT",0DH,0AH
-          DB "Press '2' For DELETE",0DH,0AH
-          DB "Press '3' For QUERY",0DH,0AH
-          DB "Press '4' For DISPLAY ALL",0DH,0AH
-          DB "Press '5' For EXIT",0DH,0AH
-          DB "Press '6' For RETURN to Main Menu",0DH,0AH
+          DB "Press '2' For DELETE",0DH,0AH 
+          DB "Press '3' For SAVE",0DH,0AH
+          DB "Press '4' For QUERY",0DH,0AH
+          DB "Press '5' For DISPLAY ALL",0DH,0AH
+          DB "Press '6' For EXIT",0DH,0AH
+          DB "Press '7' For RETURN to Main Menu",0DH,0AH
           DB "*******************************",0DH,0AH
           DB "Enter Your CHOICE",0DH,0AH,'$'     
 
@@ -26,7 +27,8 @@ buffer db 20,?, 20 dup(0)
 nameP db 'name is: ',0ah,0dh,'$'
 msg db 'enter the name and enter {dollar sign} to terminate: $',0ah,0dh
 msg1 db 'enter the 11-digit  number and enter {dollar sign} to terminate: ',0ah,0dh,'$'  
- 
+fname db 'first.txt',0
+fhandle dw ?
 counter DW 0h
 
 n_line DB 0AH,0DH,"$"   ;for new line
@@ -59,14 +61,16 @@ COMARE:
 CMP AL,31H  ;if choice is 1 jump to insert function
 JE INSERT
 CMP AL,32H   ; if choice is 2 jump to delete function
-JE DELETE   
-CMP AL,33H   ; if choice is 3 jump to query function
+JE DELETE 
+CMP AL,33H   ; if choice is  3jump to save function
+JE SAVE   
+CMP AL,34H   ; if choice is 4 jump to query function
 JE QUERY
-CMP AL,34H    ; if choice is 4 jump to display function
+CMP AL,35H    ; if choice is 5 jump to display function
 JE DISPLAY
-CMP AL,35H    ; if choice is 5 jump to main function
+CMP AL,36H    ; if choice is 6 jump to main function
 JE EXIT
-CMP AL,36H    ; if choice is 6 jump to exit function
+CMP AL,37H    ; if choice is 7 jump to exit function
 JE START
 
      INSERT: ; TO BE IMPLEMENTED
@@ -140,6 +144,91 @@ JE START
              
      DELETE:
      QUERY:
+     
+      
+     SAVE:
+                  
+          ;create new file
+    
+            mov ah ,3ch
+            lea dx,fname
+            mov cx,0
+            int 21h
+            mov fhandle,ax  
+        
+           ;open file
+            mov ah,3dh
+            mov al,2 ; open file for read and  write   
+            lea dx,fname
+            int 21h
+            mov fhandle, ax  
+                             
+                  
+  
+            
+           ;to write in file
+           mov si,counter 
+           mov di,0h
+           loop5:
+            mov ax,20
+            mul di
+            mov bx,fhandle
+            mov cx, 20    ;size of number of bytes to write 
+            mov dx,offset names
+            add dx,ax
+            mov ah,40h  
+            int 21h 
+            
+            
+            
+      
+            mov ax,20
+            mul di
+            mov bx,fhandle
+       
+            lea dx, numbers
+
+            add dx,ax
+            mov ah,40h
+            int 21h
+                      
+           
+            mov ah,40h
+            mov bx,fhandle
+            mov cx, 1    ;size of number of bytes to write 
+            mov dx,offset n_line  
+            int 21h
+
+            dec si
+            inc di
+            cmp si,0h
+            jnz loop5 
+            
+            
+            
+            
+            
+             ;FOR CONTINUE
+            MOV AH,09H
+            MOV DX,OFFSET CONTINUE
+            INT 21H
+            MOV AH,01H
+            INT 21H
+            CMP AL,'Y'
+            JE START
+            cmp al,'y'
+            je START
+            ;CMP AL,'E'
+            Jmp EXIT  
+            
+            
+            
+            
+            
+            
+            
+            
+            
      
      
      
