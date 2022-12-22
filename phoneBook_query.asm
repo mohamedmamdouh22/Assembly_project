@@ -6,7 +6,7 @@ data segment
     key db 20,?, 20 dup(?)        ;key = input string (sizeof(20))           
     answer db 20 dup (?)
     msg2 db 'the number is : $'
-    msg3 db 'This name not found!$'
+    msg3 db 'This name does not exist!$'
     ;=======================================================
 data ends
 
