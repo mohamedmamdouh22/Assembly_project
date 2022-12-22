@@ -3,16 +3,17 @@
 MAIN_MENU DB ,0DH,0AH,"Phone Book",0DH,0AH            ;the starting screen for the program
           DB "Press '1' For INSERT",0DH,0AH
           DB "Press '2' For DELETE",0DH,0AH 
-          DB "Press '3' For SAVE",0DH,0AH
-          DB "Press '4' For QUERY",0DH,0AH
-          DB "Press '5' For DISPLAY ALL",0DH,0AH
-          DB "Press '6' For EXIT",0DH,0AH
-          DB "Press '7' For RETURN to Main Menu",0DH,0AH
+          DB "Press '3' For SAVE a new file",0DH,0AH
+          DB "Press '4' For append to the file",0DH,0AH
+          DB "Press '5' For QUERY",0DH,0AH
+          DB "Press '6' For DISPLAY ALL",0DH,0AH
+          DB "Press '7' For REMOVE ALL",0DH,0AH
+          DB "Press '8' For EXIT",0DH,0AH
           DB "*******************************",0DH,0AH
           DB "Enter Your CHOICE",0DH,0AH,'$'     
 
 INS DB ,0DH,0AH,"FOR INSERTIN",0DH,0AH            ;the starting screen for the program
-    DB "enter the name and enter {dollar sign} to terminate: ",0DH,0AH,'$'
+    DB "enter the name: ",0DH,0AH,'$'
 names db 100 dup (0) 
 numbers db 100 dup (0)        
 DEL DB ,0DH,0AH,"FOR DELETING",0DH,0AH,'$'
@@ -25,19 +26,19 @@ EX DB ,0DH,0AH,"GOOD BYE AND HAVE A NICE TIME :)",0DH,0AH,'$'
 buffer db 20,?, 20 dup(0)
 buffer2 db 20,?, 20 dup(0)
 nameP db 'name is: ',0ah,0dh,'$'
-msg db 'enter the name and enter {dollar sign} to terminate: $',0ah,0dh
-msg1 db 'enter the 11-digit  number and enter {dollar sign} to terminate: ',0ah,0dh,'$'  
-<<<<<<< HEAD
- 
-counter DB 0h 
+msg db 'enter the name: $',0ah,0dh
+msg1 db 'enter the 11-digit  number: ',0ah,0dh,'$'  
+
+counter Db 0h 
+counter2 Dw 0h 
 msg_del db 'enter the name you want to delete: $' 
 msg_del2 db 'The phonebook is empty!$'
 msg_del3 db 'name not found!$' 
-=======
+
 fname db 'first.txt',0
 fhandle dw ?
-counter DW 0h
->>>>>>> 0dd91d060b5af7410fc9b0d117be6aee152b0b65
+
+empty db ,' Empty note book ',0ah,0dh,'$'
 
 n_line DB 0AH,0DH,"$"   ;for new line
  
@@ -56,7 +57,7 @@ INT 21H
     INT 21H
     CMP AL,31H
     JB WRONG
-    CMP AL,36H
+    CMP AL,38H
     JB COMARE 
     WRONG:
     MOV AH,09H
@@ -70,16 +71,18 @@ CMP AL,31H  ;if choice is 1 jump to insert function
 JE INSERT
 CMP AL,32H   ; if choice is 2 jump to delete function
 JE DELETE 
-CMP AL,33H   ; if choice is  3jump to save function
+CMP AL,33H   ; if choice is  3jump to add  function
 JE SAVE   
-CMP AL,34H   ; if choice is 4 jump to query function
+CMP AL,34H   ; if choice is 4 jump to append function
+JE APPEND
+CMP AL,35H    ; if choice is 5 jump to search function
 JE QUERY
-CMP AL,35H    ; if choice is 5 jump to display function
+CMP AL,36H    ; if choice is 6 jump to display function
 JE DISPLAY
-CMP AL,36H    ; if choice is 6 jump to main function
-JE EXIT
 CMP AL,37H    ; if choice is 7 jump to exit function
-JE START
+JE CLEAR
+cmp al,38h     ; exit if choice is 8
+je EXIT
 
      INSERT: ; TO BE IMPLEMENTED
       mov di,offset names
@@ -89,6 +92,7 @@ JE START
       add di,ax
       add bp,ax     
      inc counter
+     inc counter2
      mov ah,9h
      mov dx,offset INS
      int 21h
@@ -280,12 +284,10 @@ JE START
             JE EXIT  
         
                  
-     
-     QUERY:
-     
+
       
-     SAVE:
-                  
+    SAVE:  
+    
           ;create new file
     
             mov ah ,3ch
@@ -305,7 +307,9 @@ JE START
   
             
            ;to write in file
-           mov si,counter 
+           cmp counter2,0
+           jz CONT 
+           mov si,counter2 
            mov di,0h
            loop5:
             mov ax,20
@@ -340,13 +344,15 @@ JE START
             dec si
             inc di
             cmp si,0h
-            jnz loop5 
-            
-            
-            
-            
-            
+            jnz loop5
              ;FOR CONTINUE
+            CONT:
+            mov ah,9h
+            lea dx,n_line
+            int 21h
+            mov ah,9h
+            lea dx,empty
+            int 21h
             MOV AH,09H
             MOV DX,OFFSET CONTINUE
             INT 21H
@@ -357,21 +363,84 @@ JE START
             cmp al,'y'
             je START
             ;CMP AL,'E'
-            Jmp EXIT  
+            Jmp EXIT          
+            
+            
+             APPEND:
+             ;open file
+            mov ah,3dh
+            mov al,2 ; open file for read and  write   
+            lea dx,fname
+            int 21h
+            mov fhandle, ax  
+            
+            
+             
+            mov al, 2
+        	mov bx, fhandle
+        	mov cx, 0
+        	mov dx, 1
+        	mov ah, 42h
+        	int 21h 
+            
+  
+            cmp counter2,0h
+            jz CONT
+           ;to write in file
+           mov si,counter2 
+           mov di,0h
+           loop6:
+            mov ax,20
+            mul di
+            mov bx,fhandle
+            mov cx, 20    ;size of number of bytes to write 
+            mov dx,offset names
+            add dx,ax
+            mov ah,40h  
+            int 21h 
             
             
             
+      
+            mov ax,20
+            mul di
+            mov bx,fhandle
+       
+            lea dx, numbers
+
+            add dx,ax
+            mov ah,40h
+            int 21h
+                      
+           
+            mov ah,40h
+            mov bx,fhandle
+            mov cx, 1    ;size of number of bytes to write 
+            mov dx,offset n_line  
+            int 21h
+
+            dec si
+            inc di
+            cmp si,0h
+            jnz loop6
+         
+           
+
+            ;FOR CONTINUE
             
-            
-            
-            
-            
-            
-     
-     
-     
-     
-     
+            MOV AH,09H
+            MOV DX,OFFSET CONTINUE
+            INT 21H
+            MOV AH,01H
+            INT 21H
+            CMP AL,'Y'
+            JE START
+            cmp al,'y'
+            je START
+            ;CMP AL,'E'
+            Jmp EXIT          
+       QUERY:
+
      DISPLAY:
      
         mov bx,0
@@ -411,7 +480,7 @@ JE START
             CMP AL,'E'
             JE EXIT                
          
-
+    CLEAR:
     EXIT:  ; SAY GOOD BYE AND THEN EXIT
     MOV AH,09H
     MOV DX,OFFSET EX
