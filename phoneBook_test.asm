@@ -366,7 +366,7 @@ je EXIT
             Jmp EXIT          
             
             
-             APPEND:
+       APPEND:
              ;open file
             mov ah,3dh
             mov al,2 ; open file for read and  write   
@@ -375,11 +375,11 @@ je EXIT
             mov fhandle, ax  
             
             
-             
+            
             mov al, 2
         	mov bx, fhandle
         	mov cx, 0
-        	mov dx, 1
+        	mov dx, 0
         	mov ah, 42h
         	int 21h 
             
