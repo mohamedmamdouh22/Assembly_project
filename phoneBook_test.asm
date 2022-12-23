@@ -26,13 +26,14 @@ buffer db 20,?, 20 dup(0)
 buffer2 db 20,?, 20 dup(0)
 nameP db 'name is: ',0ah,0dh,'$'
 msg db 'enter the name: $',0ah,0dh
-msg1 db 'enter the 11-digit  number: ',0ah,0dh,'$'  
+msg1 db 'enter the number: ',0ah,0dh,'$'  
 
 counter Db 0h 
 counter2 Dw 0h 
 msg_del db 'enter the name you want to delete: $' 
 msg_del2 db 'The phonebook is empty!$'
-msg_del3 db 'name not found!$' 
+msg_del3 db 'name not found!$'
+msg_del4 db 'DELETED SUCCESSFULLY$'
 
 fname db 'first.txt',0
 fhandle dw ?
@@ -312,7 +313,15 @@ je EXIT
             inc bx
             loop del_n   
             ;================================================================
-            
+            mov ah,9h
+            mov dx,offset n_line
+            int 21h
+            ;to priint the msg we use int 21h with 9 in ah
+            mov ah,9
+            ;mov dx, offset msg   or...
+            lea dx , msg_del4
+            int 21h
+            ; end of printing msg   
             ;FOR CONTINUE
             MOV AH,09H
             MOV DX,OFFSET CONTINUE
