@@ -95,7 +95,10 @@ n_line DB 0AH,0DH,"$"   ;for new line
 
             jnz loop0
             dec counter
-            dec counter2    
+            dec counter2
+    mov bx, fhandle
+	mov ah, 3eh
+	int 21h ; close file...    
 
 ;mov bx,offset names ; hold base pointer for names array
 mov di,offset numbers ; hold base pointer for numbers array 
