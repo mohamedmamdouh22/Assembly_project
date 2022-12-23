@@ -3,12 +3,11 @@
 MAIN_MENU DB ,0DH,0AH,"Phone Book",0DH,0AH            ;the starting screen for the program
           DB "Press '1' For INSERT",0DH,0AH
           DB "Press '2' For DELETE",0DH,0AH 
-          DB "Press '3' For SAVE a new file",0DH,0AH
-          DB "Press '4' For append to the file",0DH,0AH
-          DB "Press '5' For QUERY",0DH,0AH
-          DB "Press '6' For DISPLAY ALL",0DH,0AH
-          DB "Press '7' For REMOVE ALL",0DH,0AH
-          DB "Press '8' For EXIT",0DH,0AH
+          DB "Press '3' For SAVE CHANGES",0DH,0AH
+          DB "Press '4' For QUERY",0DH,0AH
+          DB "Press '5' For DISPLAY ALL",0DH,0AH
+          DB "Press '6' For REMOVE ALL",0DH,0AH
+          DB "Press '7' For EXIT",0DH,0AH
           DB "*******************************",0DH,0AH
           DB "Enter Your CHOICE",0DH,0AH,'$'     
 
@@ -22,7 +21,7 @@ DIS DB ,0DH,0AH,"FOR DISPLAYING",0DH,0AH,'$'
 WRG DB ,0DH,0AH,"WRONG CHOICE",0DH,0AH,'$'
 EX DB ,0DH,0AH,"GOOD BYE AND HAVE A NICE TIME :)",0DH,0AH,'$'   
        CONTINUE DB ,0DH,0AH,"DO YOU WANT TO CONTINUE Y/E",0DH,0AH,'$' 
-
+garbg db 1,?, 1 dup(0)
 buffer db 20,?, 20 dup(0)
 buffer2 db 20,?, 20 dup(0)
 nameP db 'name is: ',0ah,0dh,'$'
@@ -45,6 +44,58 @@ n_line DB 0AH,0DH,"$"   ;for new line
 ;numbers DD 0  times 100     
 .CODE
 .STARTUP
+;load data from file int arrays
+
+            mov ah,3dh
+            mov al,2 ; open file for read and  write   
+            lea dx,fname
+            int 21h
+            mov fhandle, ax  
+                             
+                  
+  
+            
+           ;to read from file
+            
+           mov di,0h
+           loop0:
+            inc counter
+            inc counter2
+            mov ax,20
+            mul di
+            mov bx,fhandle
+            mov cx, 20    ;size of number of bytes to write 
+            mov dx,offset names
+            add dx,ax
+            mov ah,3fh  
+            int 21h 
+            
+            
+            
+      
+            mov ax,20
+            mul di
+            mov bx,fhandle
+       
+            lea dx, numbers
+
+            add dx,ax
+            mov ah,3fh
+            int 21h
+                      
+           
+            mov ah,3fh
+            mov bx,fhandle
+            mov cx, 1    ;size of number of bytes to write 
+            mov dx,offset garbg  
+            int 21h
+
+            inc di
+            cmp ax,0h
+
+            jnz loop0
+            dec counter
+            dec counter2    
 
 ;mov bx,offset names ; hold base pointer for names array
 mov di,offset numbers ; hold base pointer for numbers array 
@@ -57,7 +108,7 @@ INT 21H
     INT 21H
     CMP AL,31H
     JB WRONG
-    CMP AL,38H
+    CMP AL,37H
     JB COMARE 
     WRONG:
     MOV AH,09H
@@ -73,15 +124,13 @@ CMP AL,32H   ; if choice is 2 jump to delete function
 JE DELETE 
 CMP AL,33H   ; if choice is  3jump to add  function
 JE SAVE   
-CMP AL,34H   ; if choice is 4 jump to append function
-JE APPEND
-CMP AL,35H    ; if choice is 5 jump to search function
+CMP AL,34H    ; if choice is 4 jump to search function
 JE QUERY
-CMP AL,36H    ; if choice is 6 jump to display function
+CMP AL,35H    ; if choice is 5 jump to display function
 JE DISPLAY
-CMP AL,37H    ; if choice is 7 jump to exit function
+CMP AL,36H    ; if choice is 6 jump to clear function
 JE CLEAR
-cmp al,38h     ; exit if choice is 8
+cmp al,37h     ; exit if choice is 7
 je EXIT
 
      INSERT: ; TO BE IMPLEMENTED
@@ -382,82 +431,13 @@ je EXIT
             Jmp EXIT          
             
             
-       APPEND:
-             ;open file
-            mov ah,3dh
-            mov al,2 ; open file for read and  write   
-            lea dx,fname
-            int 21h
-            mov fhandle, ax  
             
-            
-            
-            mov al, 2
-        	mov bx, fhandle
-        	mov cx, 0
-        	mov dx, 0
-        	mov ah, 42h
-        	int 21h 
-            
-  
-            cmp counter2,0h
-            jz EMP
-           ;to write in file
-           mov si,counter2 
-           mov di,0h
-           loop6:
-            mov ax,20
-            mul di
-            mov bx,fhandle
-            mov cx, 20    ;size of number of bytes to write 
-            mov dx,offset names
-            add dx,ax
-            mov ah,40h  
-            int 21h 
-            
-            
-            
-      
-            mov ax,20
-            mul di
-            mov bx,fhandle
-       
-            lea dx, numbers
-
-            add dx,ax
-            mov ah,40h
-            int 21h
-                      
-           
-            mov ah,40h
-            mov bx,fhandle
-            mov cx, 1    ;size of number of bytes to write 
-            mov dx,offset n_line  
-            int 21h
-
-            dec si
-            inc di
-            cmp si,0h
-            jnz loop6
-         
-           
-
-            ;FOR CONTINUE
-            
-            MOV AH,09H
-            MOV DX,OFFSET CONTINUE
-            INT 21H
-            MOV AH,01H
-            INT 21H
-            CMP AL,'Y'
-            JE START
-            cmp al,'y'
-            je START
-            ;CMP AL,'E'
-            Jmp EXIT          
        QUERY:
 
      DISPLAY:
+        mov ah,9h
+        lea dx,n_line
+        int 21h
         cmp counter2,0h
         jz EMP
         mov bx,0
