@@ -448,6 +448,9 @@ je EXIT
              ;FOR CONTINUE
           EMP:
             mov ah,9h
+            lea dx,saved
+            int 21h
+            mov ah,9h
             lea dx,n_line
             int 21h
             mov ah,9h
@@ -677,10 +680,10 @@ je EXIT
               mul bx
               add si,ax
               mov di,offset numbers
-              mov ax,20h
-              mul bx
+             ; mov ax,20h
+             ; mul bx
               add di,ax
-             mov dx,20h 
+             mov dx,14h 
             loop9:
                 mov [si],0h
                 dec dx
@@ -689,7 +692,7 @@ je EXIT
   
                 jnz loop9
                 
-             mov dx,20h
+             mov dx,14h
              loop10:
                 mov [di],0h
                 dec dx
