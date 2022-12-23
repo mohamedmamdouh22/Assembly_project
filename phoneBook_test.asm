@@ -153,7 +153,7 @@ je EXIT
             jmp EXIT
                          
              
-             
+     ;====================================================================================        
      DELETE:    
         ;to priint the msg we use int 21h with 9 in ah
         mov ah,9
@@ -174,14 +174,14 @@ je EXIT
 		mov buffer2[bx+2], 0h
 		mov si, offset buffer2+2    ; si holds the start address of buffer
         ;input taken
-        
+        ;================================================================
                  
         
         
         mov bx,offset names ; hold base pointer for names array
         mov di,offset numbers ; hold base pointer for numbers array      
         mov cx , 14h  ; cx holds 20
-        xor dl ,dl    ;dl =0
+        mov dl ,0h   ;dl =0
         
          ; cx= 20
          ; si=base of buffer 
@@ -191,7 +191,7 @@ je EXIT
          ; ax hold char   
         
        ;find name 
-          
+        ;================================================================  
         find:          
         
             cmp dl,counter
@@ -204,16 +204,16 @@ je EXIT
     		inc si
     		inc bx
     		loop find 
-    		          
+    	;================================================================	          
     		          
     	cmp cx, 0h      ;if cx = 0 it means we found the element
     	jz found    	   	 
-    	   	 
+    	;================================================================   	 
         next:                
             mov si, offset buffer2+2     ;set si to buffer base
             mov bx,offset names ; hold base pointer for names array  
             inc dl 
-            mov al , 15h        ;ax= dl * 21 
+            mov al , 14h        ;ax= dl * 20 
             mul dl
             add bx ,ax
              
@@ -221,14 +221,14 @@ je EXIT
             mov cx,14h           ;set cx to 20
                                  ;dl++
             jmp find
-               
+        ;================================================================       
         found:
           mov si,offset names   ; hold base pointer for names array
           mov di,offset numbers ; hold base pointer for numbers array      
           mov cx , 14h          ; cx holds 20 
            
           mov al ,dl
-          mov dl, 15h
+          mov dl, 14h
           mul dl                  
           mov bx ,ax                ;bx holds the offset of element we want to delete
           
@@ -236,7 +236,7 @@ je EXIT
           mov al ,counter
           mul dl                    ;ax holds the offset of last element 
           mov bp , ax               ;need modification
-          
+          ;================================================================
           del_n:
             mov dl , [si+bp]
             mov [si+bx],dl
@@ -247,7 +247,7 @@ je EXIT
             inc bp
             inc bx
             loop del_n   
-          
+            ;================================================================
             
             ;FOR CONTINUE
             MOV AH,09H
@@ -260,7 +260,7 @@ je EXIT
             CMP AL,'E'
             JE EXIT
             
-              
+        ;================================================================      
         not_found:     
             mov ah,9h
             mov dx,offset n_line
@@ -282,8 +282,10 @@ je EXIT
             JE START
             cmp al,'y'
             je START
+            cmp al,'y'
+            je START
             ;CMP AL,'E'
-            Jmp EXIT  
+            Jmp EXIT   
 
       
     SAVE:  
@@ -496,7 +498,7 @@ je EXIT
             cmp al,'y'
             je START
             ;CMP AL,'E'
-            Jmp EXIT               
+            Jmp EXIT            
          
     CLEAR:
     EXIT:  ; SAY GOOD BYE AND THEN EXIT
