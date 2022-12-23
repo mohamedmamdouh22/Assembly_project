@@ -442,9 +442,143 @@ je EXIT
             ;CMP AL,'E'
             Jmp EXIT          
             
-            
-            
+               
+       ;====================================Query================================================     
        QUERY:
+             ;=============================== 
+            ;set counter
+            mov find_name , 0
+            mov find_number , 0
+            ;===============================
+           ;================================  
+            print_new_line macro
+                mov dl, 13
+                mov ah, 2
+                int 21h   
+                mov dl, 10
+                mov ah, 2
+                int 21h      
+            endm
+            ;================================= 
+             
+            ;===========================================================
+            print_new_line
+            mov ah,9      ;to print the msg we use int 21h with 9 in ah
+            mov dx ,offset query_msg
+            int 21h
+            ; end of printing msg 
+            ;=========================================================== 
+            ;================================================================   
+            mov bx ,offset buffer2+2      
+            mov cx ,14h
+            
+            buf_0_query:
+                mov [bx] ,0h
+                inc bx
+                loop buf_0_query 
+            
+            
+            ; take input
+            mov dx, offset buffer2
+    		mov ah, 0ah
+    		int 21h
+    		
+    		xor bx, bx
+    		mov bl, buffer2[1]
+    		mov buffer2[bx+2], 0h
+    		mov si, offset buffer2+2    ; si holds the start address of buffer
+            ;input taken
+            ;================================================================
+                 
+        
+            
+            mov bx,offset names ; hold base pointer for names array
+            mov di,offset numbers ; hold base pointer for numbers array      
+            mov cx , 14h  ; cx holds 20
+            mov dl ,0h   ;dl =0 
+            
+             ; cx= 20
+             ; si=base of buffer 
+             ; bx = base of names 
+             ; di= base of numbers
+             ; bp =0
+             ; ax hold char   
+            
+            ;find name 
+            ;================================================================  
+            find_query:             
+                cmp dl,counter
+                jz  not_found_query
+                
+                mov al ,[si]   ;al holds the char of buffer
+                cmp al ,[bx]  
+                jnz next_query  
+               
+        		inc si
+        		inc bx
+        		loop find_query 
+        	;================================================================	          
+        		          
+        	cmp cx, 0h      ;if cx = 0 it means we found the element
+        	jz found_query    	   	 
+        	;================================================================   	 
+            next_query:                
+                mov si, offset buffer2+2     ;set si to buffer base
+                mov bx,offset names ; hold base pointer for names array  
+                inc dl 
+                mov al , 14h        ;ax= dl * 20 
+                mul dl
+                add bx ,ax
+                 
+                   
+                mov cx,14h           ;set cx to 20
+                                     ;dl++
+                jmp find_query
+            ;================================================================ 
+                    
+             ;output the name if it is exist 
+             ;=======================================
+              found_query: 
+                mov cl , dl      ;save dl in cl and restore it again
+                print_new_line
+                
+                ; print massege
+                mov ah , 9
+                mov dx , offset numberOfUser              
+                int 21h              
+                                      
+                mov dl ,cl        ; back dl  dl = counter
+                mov di,offset numbers ; hold base pointer for numbers array
+                mov al ,14h 
+                mov cx ,14h
+                mul dl
+                mov bx,ax
+                ;ax holds the strat address of name
+                print_query: 
+                    mov ah,2
+                    mov dl , [di+bx]
+                    int 21h
+                    inc bx
+                    loop print_query
+                   
+                 jmp CONT           
+            
+                
+           ;=============================================
+             not_found_query:
+                     print_new_line
+                     mov ah , 9
+                     mov dx , offset no_name 
+                     int 21h
+                     jmp CONT
+           ;=============================================  
+                     
+     
+       ;======================End of query ====================================
+     
+     
+            
+       
 
      DISPLAY:
         mov ah,9h
