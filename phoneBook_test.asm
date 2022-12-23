@@ -33,7 +33,10 @@ counter2 Dw 0h
 msg_del db 'enter the name you want to delete: $' 
 msg_del2 db 'The phonebook is empty!$'
 msg_del3 db 'name not found!$'
-msg_del4 db 'DELETED SUCCESSFULLY$'
+msg_del4 db 'DELETED SUCCESSFULLY$' 
+added db 'ADDED SUCCESSFULLY$'
+cleared db 'CLEARED SUCCESSFULLY$'
+saved db 'SAVED SUCCESSFULLY$'
 
 fname db 'first.txt',0
 fhandle dw ?
@@ -204,7 +207,12 @@ je EXIT
     		inc bp
     		cmp [si],0h
     		jnz loop2
-                 
+    		mov ah,9h
+    		lea dx,n_line
+    		int 21h
+             mov ah,9h
+             lea dx,added
+             int 21h    
              ;FOR CONTINUE
             MOV AH,09H
             MOV DX,OFFSET CONTINUE
@@ -433,6 +441,9 @@ je EXIT
             inc di
             cmp si,0h
             jnz loop5
+            mov ah,9h
+            lea dx,saved
+            int 21h
             jmp CONT
              ;FOR CONTINUE
           EMP:
@@ -650,6 +661,62 @@ je EXIT
             Jmp EXIT            
          
     CLEAR:
+     mov ah,9h
+        lea dx,n_line
+        int 21h
+        cmp counter2,0h
+        jz EMP
+        mov bx,0
+        mov cx,counter2
+        FLoop:
+           ; mov ah,9h
+           ; mov dx,offset nameP
+           ; int 21h
+              mov si,offset names
+              mov ax,20h
+              mul bx
+              add si,ax
+              mov di,offset numbers
+              mov ax,20h
+              mul bx
+              add di,ax
+             mov dx,20h 
+            loop9:
+                mov [si],0h
+                dec dx
+                inc si
+                cmp dx,0h
+  
+                jnz loop9
+                
+             mov dx,20h
+             loop10:
+                mov [di],0h
+                dec dx
+                inc di
+                cmp dx,0h
+
+                jnz loop10
+                 
+            inc bx
+            loop FLoop
+            mov counter,0h
+            mov counter2,0h
+            mov ah,9h
+            lea dx,cleared
+            int 21h
+            ;FOR CONTINUE
+            MOV AH,09H
+            MOV DX,OFFSET CONTINUE
+            INT 21H
+            MOV AH,01H
+            INT 21H
+            CMP AL,'Y'
+            JE START
+            cmp al,'y'
+            je START
+            ;CMP AL,'E'
+            Jmp EXIT      
     EXIT:  ; SAY GOOD BYE AND THEN EXIT
     MOV AH,09H
     MOV DX,OFFSET EX
