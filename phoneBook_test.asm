@@ -41,6 +41,19 @@ tab DB 0AH,0DH,"    "   ;for new line
 empty db ,' Empty note book ',0ah,0dh,'$'
 
 n_line DB 0AH,0DH,"$"   ;for new line
+
+query_msg db 'Enter the name you want to looking for: $'
+key db  20 dup(?)        ;key = input string (sizeof(20))           
+answer db 20 dup (?) 
+find_name dw ?
+find_number dw ?
+nameOfUser db 'Your name is : $'
+numberOfUser db 'Your number is : $' 
+no_name db 'This name does not exist!$'
+ 
+ 
+ 
+ 
  
 ;numbers DD 0  times 100     
 .CODE
@@ -445,11 +458,7 @@ je EXIT
                
        ;====================================Query================================================     
        QUERY:
-             ;=============================== 
-            ;set counter
-            mov find_name , 0
-            mov find_number , 0
-            ;===============================
+            
            ;================================  
             print_new_line macro
                 mov dl, 13
