@@ -163,7 +163,16 @@ je EXIT
         ; end of printing msg   
         
         
-        ;================================================================
+        ;================================================================   
+        mov bx ,offset buffer2+2      
+        mov cx ,14h
+        
+        buf_0:
+            mov [bx] ,0h
+            inc bx
+            loop buf_0 
+        
+        
         ; take input
         mov dx, offset buffer2
 		mov ah, 0ah
@@ -232,7 +241,8 @@ je EXIT
           mul dl                  
           mov bx ,ax                ;bx holds the offset of element we want to delete
           
-          dec counter           
+          dec counter
+          dec counter2           
           mov al ,counter
           mul dl                    ;ax holds the offset of last element 
           mov bp , ax               ;need modification
