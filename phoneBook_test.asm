@@ -81,7 +81,7 @@ no_name db 'This name does not exist!$'
             mov ax,20
             mul di
             mov bx,fhandle
-            mov cx, 20    ;size of number of bytes to write 
+            mov cx, 20    ;size of number of bytes to read 
             mov dx,offset names
             add dx,ax
             mov ah,3fh  
@@ -128,7 +128,7 @@ INT 21H
     INT 21H
     CMP AL,31H
     JB WRONG
-    CMP AL,37H
+    CMP AL,38H
     JB COMARE 
     WRONG:
     MOV AH,09H
@@ -447,9 +447,7 @@ je EXIT
             jmp CONT
              ;FOR CONTINUE
           EMP:
-            mov ah,9h
-            lea dx,saved
-            int 21h
+
             mov ah,9h
             lea dx,n_line
             int 21h
