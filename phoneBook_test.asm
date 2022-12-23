@@ -153,7 +153,7 @@ je EXIT
             jmp EXIT
                          
              
-     ;====================================================================================        
+     ;============================DELETE============================================        
      DELETE:    
         ;to priint the msg we use int 21h with 9 in ah
         mov ah,9
@@ -239,10 +239,12 @@ je EXIT
           ;================================================================
           del_n:
             mov dl , [si+bp]
-            mov [si+bx],dl
+            mov [si+bx],dl 
+            mov [si+bp] ,0h
             
             mov dl ,[di+bp]
-            mov [di+bx],dl  
+            mov [di+bx],dl 
+            mov [di+bp] ,0h 
             
             inc bp
             inc bx
