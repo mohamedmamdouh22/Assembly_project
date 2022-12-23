@@ -321,8 +321,10 @@ je EXIT
             INT 21H
             CMP AL,'Y'
             JE START
-            CMP AL,'E'
-            JE EXIT
+            cmp al,'y'
+            je start
+            ;CMP AL,'E'
+            jmp EXIT
             
         ;================================================================      
         not_found:     
@@ -345,11 +347,9 @@ je EXIT
             CMP AL,'Y'
             JE START
             cmp al,'y'
-            je START
-            cmp al,'y'
-            je START
+            je start
             ;CMP AL,'E'
-            Jmp EXIT   
+            jmp EXIT
 
       
     SAVE:  
@@ -468,8 +468,10 @@ je EXIT
                 cmp [si],0h
                 jnz loop7
                 inc si
-
-             loop8:
+	    mov ah,9h
+            mov dx,offset n_line
+            int 21h
+            loop8:
                 mov ah,2
                 mov dx,[di]
                 int 21h
